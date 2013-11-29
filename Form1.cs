@@ -31,6 +31,7 @@ namespace Coach_Display
         {
             com_search();
             bool connected = Connect();
+           
             
             
             
@@ -43,15 +44,15 @@ namespace Coach_Display
             byte[] buffer = new byte[read_buffer];
             //System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
             //timer.Start();
+            byte2display = new Queue();
             try
             {
                 while (true)
                 {
-                    if (active_com.BytesToRead > read_buffer)
+                    if (active_com.BytesToRead >= read_buffer)
                     {
                         len = active_com.Read(buffer, 0, read_buffer);
-                        for (int i = 0; i < len; i++)
-                            byte2display.Enqueue(buffer[i]);
+                        byte2display.Enqueue(buffer.Clone());
                     }
 
                 }
@@ -75,60 +76,83 @@ namespace Coach_Display
             byte one = 0;
             byte two = 0;
             byte[] buffer = new byte[17];
+            byte[] full_buffer = new byte[50];
             //System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
             //timer.Start();
             packet legacy = new packet();
+            byte[] temp = new byte[2];
             while (true)
             {
-                if (byte2display.Count > 2)
+                if (byte2display.Count > 1)
                 {
-                    one = (byte)byte2display.Dequeue();
-                    
-                    if ((one == 0x10))
+                    full_buffer = (byte[])byte2display.Dequeue();
+                    for (int i = 0; i < full_buffer.Length; i++)
                     {
-                        two = (byte)byte2display.Dequeue();
-                        if (two == 0x13)
+                        if (i<63)
                         {
-                            while (byte2display.Count < 17)
-                            {
-                            }
-                            for (int i = 0; i < 17; i++)
-                                buffer[i] = (byte)byte2display.Dequeue();
-                            textBox13.Text = "" + buffer[0];
-                            textBox12.Text = "" + buffer[1];
-                            textBox11.Text = "" + buffer[2];
-                            
-                            textBox6.Text = "" + BitConverter.ToInt16(buffer, 4);
-                            textBox5.Text = "" + BitConverter.ToInt16(buffer, 6);
-                            textBox3.Text = "" + BitConverter.ToInt16(buffer, 8);
-                            textBox7.Text = "" + BitConverter.ToInt16(buffer, 10);
-                            textBox4.Text = "" + buffer[12] + " " + BitConverter.ToUInt16(buffer, 13);
+                            one = full_buffer[i];
+                            i = i + 1;
+                        }
 
-                            if ((buffer[3] != 0)&&(buffer[3] != 0x10))
+                        if ((one == 10))
+                        {
+                            if (i < 63)
                             {
-                                legacy.time_h = buffer[0];
-                                legacy.time_min = buffer[1];
-                                legacy.time_sec = buffer[2];
-                                legacy.status = buffer[3];
-                                legacy.temp =  BitConverter.ToInt16(buffer, 4);
-                                legacy.prok = BitConverter.ToInt16(buffer, 6);
-                                legacy.n =  BitConverter.ToInt16(buffer, 8);
-                                legacy.vel = BitConverter.ToInt16(buffer, 10);
-                                legacy.Km = buffer[12];
-                                legacy.meter = BitConverter.ToUInt16(buffer, 13);
-                                legacy.char_pulse = buffer[15];
-                                legacy.check_sum = buffer[16];
+                                two = full_buffer[i];
+                                i = i + 1;
                             }
-                            textBox10.Text = "" + (buffer[0] - legacy.time_h);
-                            textBox9.Text = "" + (buffer[1] - legacy.time_min);
-                            textBox8.Text = "" + (buffer[2] - legacy.time_sec);
+                            if (two == 13)
+                            {
+                                /*for (int i = 0; i < 17; i++)
+                                    if (byte2display.Peek() != null)
+                                        buffer[i] = (byte)byte2display.Dequeue();
+                                    else
+                                        byte2display.Dequeue();
+                                */
+                                if (i + 17 <= full_buffer.Length)
+                                    for (int j = 0; j < buffer.Length; j++)
+                                        buffer[j] = full_buffer[i + j];     
+                           
+                                textBox13.Invoke(new Action(() => textBox13.Text = "" + buffer[0]));
+                                textBox12.Invoke(new Action(() => textBox12.Text = "" + buffer[1]));
+                                textBox11.Invoke(new Action(() => textBox11.Text = "" + buffer[2]));
 
-                            textBox1.Text = "" + (BitConverter.ToInt16(buffer, 8) - legacy.n);
-                            textBox2.Text = "" + (buffer[12] - legacy.Km) + " " + (BitConverter.ToUInt16(buffer, 13) - legacy.meter);
+                                temp[0] = buffer[5]; temp[1] = buffer[4];
+                                textBox6.Invoke(new Action(() => textBox6.Text = "" + BitConverter.ToInt16(temp, 0)));
+                                temp[0] = buffer[7]; temp[1] = buffer[6];
+                                textBox5.Invoke(new Action(() => textBox5.Text = "" + BitConverter.ToInt16(temp, 0)));
+                                temp[0] = buffer[9]; temp[1] = buffer[8];
+                                textBox3.Invoke(new Action(() => textBox3.Text = "" + BitConverter.ToInt16(temp, 0)));
+                                temp[0] = buffer[11]; temp[1] = buffer[10];
+                                textBox7.Invoke(new Action(() => textBox7.Text = "" + BitConverter.ToInt16(temp, 0)));
+                                temp[0] = buffer[14]; temp[1] = buffer[13];
+                                textBox4.Invoke(new Action(() => textBox4.Text = "" + buffer[12] + " " + BitConverter.ToUInt16(temp, 0)));
+
+                                if ((buffer[3] != 0) && (buffer[3] != 0x10))
+                                {
+                                    legacy.time_h = buffer[0];
+                                    legacy.time_min = buffer[1];
+                                    legacy.time_sec = buffer[2];
+                                    legacy.status = buffer[3];
+                                    legacy.temp = BitConverter.ToInt16(buffer, 4);
+                                    legacy.prok = BitConverter.ToInt16(buffer, 6);
+                                    legacy.n = BitConverter.ToInt16(buffer, 8);
+                                    legacy.vel = BitConverter.ToInt16(buffer, 10);
+                                    legacy.Km = buffer[12];
+                                    legacy.meter = BitConverter.ToUInt16(buffer, 13);
+                                    legacy.char_pulse = buffer[15];
+                                    legacy.check_sum = buffer[16];
+                                }
+                                textBox10.Invoke(new Action(() => textBox10.Text = "" + (buffer[0] - legacy.time_h)));
+                                textBox9.Invoke(new Action(() => textBox9.Text = "" + (buffer[1] - legacy.time_min)));
+                                textBox8.Invoke(new Action(() => textBox8.Text = "" + (buffer[2] - legacy.time_sec)));
+
+                                textBox1.Invoke(new Action(() => textBox1.Text = "" + (BitConverter.ToInt16(buffer, 8) - legacy.n)));
+                                textBox2.Invoke(new Action(() => textBox2.Text = "" + (buffer[12] - legacy.Km) + " " + (BitConverter.ToUInt16(buffer, 13) - legacy.meter)));
+                            }
                         }
                     }
-                }
-                    
+                }   
             }
             //timer.Stop();
         }
@@ -259,6 +283,7 @@ namespace Coach_Display
             Disconnect();
             Connect();
         }
+
 
 
     }

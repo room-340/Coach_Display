@@ -57,6 +57,8 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.label11 = new System.Windows.Forms.Label();
+            this.textBox14 = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // textBox1
@@ -76,7 +78,7 @@
             // 
             this.textBox5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBox5.Font = new System.Drawing.Font("Trebuchet MS", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBox5.Location = new System.Drawing.Point(273, 108);
+            this.textBox5.Location = new System.Drawing.Point(206, 85);
             this.textBox5.Name = "textBox5";
             this.textBox5.ReadOnly = true;
             this.textBox5.Size = new System.Drawing.Size(108, 39);
@@ -193,7 +195,7 @@
             // label9
             // 
             this.label9.Font = new System.Drawing.Font("Trebuchet MS", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label9.Location = new System.Drawing.Point(278, 76);
+            this.label9.Location = new System.Drawing.Point(211, 53);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(90, 29);
             this.label9.TabIndex = 25;
@@ -202,7 +204,7 @@
             // label10
             // 
             this.label10.Font = new System.Drawing.Font("Trebuchet MS", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label10.Location = new System.Drawing.Point(278, 182);
+            this.label10.Location = new System.Drawing.Point(349, 54);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(69, 28);
             this.label10.TabIndex = 26;
@@ -211,7 +213,7 @@
             // label12
             // 
             this.label12.Font = new System.Drawing.Font("Trebuchet MS", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label12.Location = new System.Drawing.Point(277, 290);
+            this.label12.Location = new System.Drawing.Point(210, 149);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(104, 28);
             this.label12.TabIndex = 28;
@@ -317,7 +319,7 @@
             // 
             this.textBox6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBox6.Font = new System.Drawing.Font("Trebuchet MS", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBox6.Location = new System.Drawing.Point(273, 213);
+            this.textBox6.Location = new System.Drawing.Point(344, 85);
             this.textBox6.Name = "textBox6";
             this.textBox6.ReadOnly = true;
             this.textBox6.Size = new System.Drawing.Size(108, 39);
@@ -330,7 +332,7 @@
             // 
             this.textBox7.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBox7.Font = new System.Drawing.Font("Trebuchet MS", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBox7.Location = new System.Drawing.Point(273, 321);
+            this.textBox7.Location = new System.Drawing.Point(206, 180);
             this.textBox7.Name = "textBox7";
             this.textBox7.ReadOnly = true;
             this.textBox7.Size = new System.Drawing.Size(108, 39);
@@ -373,12 +375,36 @@
             this.label11.TabIndex = 41;
             this.label11.Text = "COM\r\nпорт:";
             // 
+            // textBox14
+            // 
+            this.textBox14.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBox14.Font = new System.Drawing.Font("Trebuchet MS", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.textBox14.Location = new System.Drawing.Point(344, 180);
+            this.textBox14.Name = "textBox14";
+            this.textBox14.ReadOnly = true;
+            this.textBox14.Size = new System.Drawing.Size(108, 39);
+            this.textBox14.TabIndex = 43;
+            this.textBox14.TabStop = false;
+            this.textBox14.Text = "54";
+            this.textBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label13
+            // 
+            this.label13.Font = new System.Drawing.Font("Trebuchet MS", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label13.Location = new System.Drawing.Point(348, 149);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(104, 28);
+            this.label13.TabIndex = 42;
+            this.label13.Text = "Скорость";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.ClientSize = new System.Drawing.Size(667, 385);
+            this.Controls.Add(this.textBox14);
+            this.Controls.Add(this.label13);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.richTextBox1);
@@ -447,6 +473,8 @@
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox textBox14;
+        private System.Windows.Forms.Label label13;
 
     }
 }
