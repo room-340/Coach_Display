@@ -57,8 +57,8 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.label11 = new System.Windows.Forms.Label();
-            this.textBox14 = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
+            this.textBox14 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // textBox1
@@ -375,6 +375,15 @@
             this.label11.TabIndex = 41;
             this.label11.Text = "COM\r\nпорт:";
             // 
+            // label13
+            // 
+            this.label13.Font = new System.Drawing.Font("Trebuchet MS", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label13.Location = new System.Drawing.Point(348, 149);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(104, 28);
+            this.label13.TabIndex = 42;
+            this.label13.Text = "Пульс";
+            // 
             // textBox14
             // 
             this.textBox14.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -387,15 +396,6 @@
             this.textBox14.TabStop = false;
             this.textBox14.Text = "0";
             this.textBox14.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label13
-            // 
-            this.label13.Font = new System.Drawing.Font("Trebuchet MS", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label13.Location = new System.Drawing.Point(348, 149);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(104, 28);
-            this.label13.TabIndex = 42;
-            this.label13.Text = "Скорость";
             // 
             // Form1
             // 
@@ -473,8 +473,8 @@
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.TextBox textBox14;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox textBox14;
 
     }
 }

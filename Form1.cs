@@ -38,8 +38,8 @@ namespace Coach_Display
             int read_buffer = 64;
             int len = 0;
             byte[] buffer = new byte[read_buffer];
-            //System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-            //timer.Start();
+            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
             byte2display = new Queue();
             try
             {
@@ -49,6 +49,12 @@ namespace Coach_Display
                     {
                         len = active_com.Read(buffer, 0, read_buffer);
                         byte2display.Enqueue(buffer.Clone());
+                        timer.Restart();
+                    }
+                    if (timer.ElapsedMilliseconds >= 3000)
+                    {
+                        richTextBox1.Invoke(new Action(() => richTextBox1.ForeColor = Color.Black));
+                        Disconnect();
                     }
 
                 }
@@ -64,7 +70,7 @@ namespace Coach_Display
                 return;
             }
             
-            //timer.Stop();
+            timer.Stop();
         }
 
         private void display(object com)
@@ -148,6 +154,7 @@ namespace Coach_Display
                                 temp[0] = buffer[14]; temp[1] = buffer[13];
                                 textBox2.Invoke(new Action(() => textBox2.Text = "" + (buffer[12] - legacy.Km) + " " +
                                     (BitConverter.ToUInt16(temp, 0) - legacy.meter)));
+                                textBox14.Invoke(new Action(() => textBox1.Text = "" + buffer[15]));
                             }
                         }
                     }
@@ -163,8 +170,8 @@ namespace Coach_Display
             byte[] buffer = new byte[read_buffer];
             byte mini_buffer = 0;
             byte[] temp = new byte[2];
-            //System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-            //timer.Start();
+            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
             packet legacy = new packet();
             try
             {
@@ -221,10 +228,16 @@ namespace Coach_Display
                                 temp[0] = buffer[14]; temp[1] = buffer[13];
                                 textBox2.Invoke(new Action(() => textBox2.Text = "" + (buffer[12] - legacy.Km) + " " +
                                     (BitConverter.ToUInt16(temp, 0) - legacy.meter)));
+                                textBox14.Invoke(new Action(() => textBox1.Text = "" + buffer[15]));
                             }
                         }
+                        timer.Restart();
                     }
-
+                    if (timer.ElapsedMilliseconds >= 3000)
+                    {
+                        richTextBox1.Invoke(new Action(() => richTextBox1.ForeColor = Color.Black));
+                        Disconnect();
+                    }
                 }
             }
             catch (COMException sd)
@@ -238,7 +251,7 @@ namespace Coach_Display
                 return;
             }
 
-            //timer.Stop();
+            timer.Stop();
         }
 
         private void button1_Click(object sender, EventArgs e)
