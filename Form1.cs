@@ -30,11 +30,7 @@ namespace Coach_Display
         private void Form1_Load(object sender, EventArgs e)
         {
             com_search();
-            bool connected = Connect();
-           
-            
-            
-            
+            bool connected = Connect();   
         }
 
         private void reading(object com)
@@ -191,7 +187,7 @@ namespace Coach_Display
                                 textBox11.Invoke(new Action(() => textBox11.Text = "" + buffer[2]));
 
                                 temp[0] = buffer[5]; temp[1] = buffer[4];
-                                textBox6.Invoke(new Action(() => textBox6.Text = "" + BitConverter.ToInt16(temp, 0)));
+                                textBox6.Invoke(new Action(() => textBox6.Text = string.Format("{0:F1}", BitConverter.ToInt16(temp, 0) / 10))); 
                                 temp[0] = buffer[7]; temp[1] = buffer[6];
                                 textBox5.Invoke(new Action(() => textBox5.Text = "" + BitConverter.ToInt16(temp, 0)));
                                 temp[0] = buffer[9]; temp[1] = buffer[8];
