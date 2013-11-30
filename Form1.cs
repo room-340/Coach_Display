@@ -147,13 +147,101 @@ namespace Coach_Display
                                 textBox9.Invoke(new Action(() => textBox9.Text = "" + (buffer[1] - legacy.time_min)));
                                 textBox8.Invoke(new Action(() => textBox8.Text = "" + (buffer[2] - legacy.time_sec)));
 
-                                textBox1.Invoke(new Action(() => textBox1.Text = "" + (BitConverter.ToInt16(buffer, 8) - legacy.n)));
-                                textBox2.Invoke(new Action(() => textBox2.Text = "" + (buffer[12] - legacy.Km) + " " + (BitConverter.ToUInt16(buffer, 13) - legacy.meter)));
+                                temp[0] = buffer[9]; temp[1] = buffer[8];
+                                textBox1.Invoke(new Action(() => textBox1.Text = "" + (BitConverter.ToInt16(temp, 0) - legacy.n)));
+                                temp[0] = buffer[14]; temp[1] = buffer[13];
+                                textBox2.Invoke(new Action(() => textBox2.Text = "" + (buffer[12] - legacy.Km) + " " +
+                                    (BitConverter.ToUInt16(temp, 0) - legacy.meter)));
                             }
                         }
                     }
                 }   
             }
+            //timer.Stop();
+        }
+
+        private void straight_read(object com)
+        {
+            int read_buffer = 17;
+            int len = 0;
+            byte[] buffer = new byte[read_buffer];
+            byte mini_buffer = 0;
+            byte[] temp = new byte[2];
+            //System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+            //timer.Start();
+            packet legacy = new packet();
+            try
+            {
+                while (true)
+                {
+                    if (active_com.BytesToRead > 0)
+                    {
+                        mini_buffer = (byte)active_com.ReadByte();
+                        if (mini_buffer == 10)
+                        {
+                            mini_buffer = (byte) active_com.ReadByte();
+                            if (mini_buffer == 13)
+                            {
+                                while (active_com.BytesToRead < 17)
+                                {
+                                }
+                                len = active_com.Read(buffer,0,17);
+                                textBox13.Invoke(new Action(() => textBox13.Text = "" + buffer[0]));
+                                textBox12.Invoke(new Action(() => textBox12.Text = "" + buffer[1]));
+                                textBox11.Invoke(new Action(() => textBox11.Text = "" + buffer[2]));
+
+                                temp[0] = buffer[5]; temp[1] = buffer[4];
+                                textBox6.Invoke(new Action(() => textBox6.Text = "" + BitConverter.ToInt16(temp, 0)));
+                                temp[0] = buffer[7]; temp[1] = buffer[6];
+                                textBox5.Invoke(new Action(() => textBox5.Text = "" + BitConverter.ToInt16(temp, 0)));
+                                temp[0] = buffer[9]; temp[1] = buffer[8];
+                                textBox3.Invoke(new Action(() => textBox3.Text = "" + BitConverter.ToInt16(temp, 0)));
+                                temp[0] = buffer[11]; temp[1] = buffer[10];
+                                textBox7.Invoke(new Action(() => textBox7.Text = "" + BitConverter.ToInt16(temp, 0)));
+                                temp[0] = buffer[14]; temp[1] = buffer[13];
+                                textBox4.Invoke(new Action(() => textBox4.Text = "" + buffer[12] + " " + BitConverter.ToUInt16(temp, 0)));
+
+                                if ((buffer[3] != 0) && (buffer[3] != 0x10))
+                                {
+                                    legacy.time_h = buffer[0];
+                                    legacy.time_min = buffer[1];
+                                    legacy.time_sec = buffer[2];
+                                    legacy.status = buffer[3];
+                                    legacy.temp = BitConverter.ToInt16(buffer, 4);
+                                    legacy.prok = BitConverter.ToInt16(buffer, 6);
+                                    legacy.n = BitConverter.ToInt16(buffer, 8);
+                                    legacy.vel = BitConverter.ToInt16(buffer, 10);
+                                    legacy.Km = buffer[12];
+                                    legacy.meter = BitConverter.ToUInt16(buffer, 13);
+                                    legacy.char_pulse = buffer[15];
+                                    legacy.check_sum = buffer[16];
+                                }
+                                textBox10.Invoke(new Action(() => textBox10.Text = "" + (buffer[0] - legacy.time_h)));
+                                textBox9.Invoke(new Action(() => textBox9.Text = "" + (buffer[1] - legacy.time_min)));
+                                textBox8.Invoke(new Action(() => textBox8.Text = "" + (buffer[2] - legacy.time_sec)));
+
+                                temp[0] = buffer[9]; temp[1] = buffer[8];
+                                textBox1.Invoke(new Action(() => textBox1.Text = "" + (BitConverter.ToInt16(temp, 0) - legacy.n)));
+                                temp[0] = buffer[14]; temp[1] = buffer[13];
+                                textBox2.Invoke(new Action(() => textBox2.Text = "" + (buffer[12] - legacy.Km) + " " +
+                                    (BitConverter.ToUInt16(temp, 0) - legacy.meter)));
+                            }
+                        }
+                    }
+
+                }
+            }
+            catch (COMException sd)
+            {
+                MessageBox.Show("Произошла ошибка - " + sd.Message + "\nПопробуйте выбрать другой СОМ порт.");
+                reading_active.Abort();
+                Thread.Sleep(50);
+                display_active.Abort();
+                Thread.Sleep(50);
+
+                return;
+            }
+
             //timer.Stop();
         }
 
@@ -243,13 +331,15 @@ namespace Coach_Display
             {
             }
             bool result = active_com.IsOpen;
-            reading_active = new Thread(reading);
+            // ------------------------------ CHOOSE READING METHOD HERE
+            //reading_active = new Thread(reading);
+            reading_active = new Thread(straight_read);
             display_active = new Thread(display);
             if (result)
             {
                 richTextBox1.ForeColor = Color.Green;
                 reading_active.Start();
-                display_active.Start();
+                //display_active.Start();
             }
             else
                 richTextBox1.ForeColor = Color.Black;
