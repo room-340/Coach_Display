@@ -170,9 +170,11 @@ namespace Coach_Display
             byte[] buffer = new byte[read_buffer];
             byte mini_buffer = 0;
             byte[] temp = new byte[2];
+            bool reset = false;
             System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
             timer.Start();
             packet legacy = new packet();
+            Time reset_time = new Time(0, 0, 0);
             try
             {
                 while (true)
@@ -189,46 +191,77 @@ namespace Coach_Display
                                 {
                                 }
                                 len = active_com.Read(buffer,0,17);
+                                
                                 textBox13.Invoke(new Action(() => textBox13.Text = "" + buffer[0]));
                                 textBox12.Invoke(new Action(() => textBox12.Text = "" + buffer[1]));
                                 textBox11.Invoke(new Action(() => textBox11.Text = "" + buffer[2]));
 
                                 temp[0] = buffer[5]; temp[1] = buffer[4];
-                                textBox6.Invoke(new Action(() => textBox6.Text = string.Format("{0:F1}", BitConverter.ToInt16(temp, 0) / 10))); 
+                                textBox6.Invoke(new Action(() => textBox6.Text = string.Format("{0:F1}", (float)BitConverter.ToInt16(temp, 0) / 10))); 
                                 temp[0] = buffer[7]; temp[1] = buffer[6];
                                 textBox5.Invoke(new Action(() => textBox5.Text = "" + BitConverter.ToInt16(temp, 0)));
                                 temp[0] = buffer[9]; temp[1] = buffer[8];
                                 textBox3.Invoke(new Action(() => textBox3.Text = "" + BitConverter.ToInt16(temp, 0)));
                                 temp[0] = buffer[11]; temp[1] = buffer[10];
-                                textBox7.Invoke(new Action(() => textBox7.Text = "" + BitConverter.ToInt16(temp, 0)));
+                                textBox7.Invoke(new Action(() => textBox7.Text = string.Format("{0:F1}",(float) BitConverter.ToInt16(temp, 0) / 10)));
                                 temp[0] = buffer[14]; temp[1] = buffer[13];
                                 textBox4.Invoke(new Action(() => textBox4.Text = "" + buffer[12] + " " + BitConverter.ToUInt16(temp, 0)));
 
-                                if ((buffer[3] != 0) && (buffer[3] != 0x10))
+                                if (((buffer[3] == 0) || (buffer[3] == 10)))// && (!reset))
                                 {
                                     legacy.time_h = buffer[0];
                                     legacy.time_min = buffer[1];
                                     legacy.time_sec = buffer[2];
                                     legacy.status = buffer[3];
-                                    legacy.temp = BitConverter.ToInt16(buffer, 4);
-                                    legacy.prok = BitConverter.ToInt16(buffer, 6);
-                                    legacy.n = BitConverter.ToInt16(buffer, 8);
-                                    legacy.vel = BitConverter.ToInt16(buffer, 10);
+                                    temp[0] = buffer[5]; temp[1] = buffer[4];
+                                    legacy.temp = BitConverter.ToInt16(temp, 0);
+                                    temp[0] = buffer[7]; temp[1] = buffer[6];
+                                    legacy.prok = BitConverter.ToInt16(temp, 0);
+                                    temp[0] = buffer[9]; temp[1] = buffer[8];
+                                    legacy.n = BitConverter.ToInt16(temp, 0);
+                                    temp[0] = buffer[11]; temp[1] = buffer[10];
+                                    legacy.vel = BitConverter.ToInt16(temp, 0);
                                     legacy.Km = buffer[12];
-                                    legacy.meter = BitConverter.ToUInt16(buffer, 13);
+                                    temp[0] = buffer[14]; temp[1] = buffer[13];
+                                    legacy.meter = BitConverter.ToUInt16(temp, 0);
                                     legacy.char_pulse = buffer[15];
                                     legacy.check_sum = buffer[16];
+                                    reset = true;
+                                    //reset_timereset_time = new Time(buffer[0], buffer[1], buffer[2]);
+                                    
                                 }
-                                textBox10.Invoke(new Action(() => textBox10.Text = "" + (buffer[0] - legacy.time_h)));
-                                textBox9.Invoke(new Action(() => textBox9.Text = "" + (buffer[1] - legacy.time_min)));
-                                textBox8.Invoke(new Action(() => textBox8.Text = "" + (buffer[2] - legacy.time_sec)));
+                                if ((buffer[3] != 0))// && (buffer[3]!=10))
+                                    reset = false;
+
+                                //reset_time.difference(buffer[0], buffer[1], buffer[2]);
+                                if (buffer[2] >= legacy.time_sec)
+                                    buffer[2] = (byte)(buffer[2] - legacy.time_sec);
+                                else
+                                {
+                                    buffer[1] -= 1;
+                                    buffer[2] = (byte)(60 + (buffer[2] - legacy.time_sec));
+                                }
+                                if (buffer[1] >= legacy.time_min)
+                                    buffer[1] = (byte)(buffer[1] - legacy.time_min);
+                                else
+                                {
+                                    buffer[0] -= 1;
+                                    buffer[1] = (byte)(60 + (buffer[1] - legacy.time_min));
+                                }
+                                if (buffer[0] >= legacy.time_h)
+                                    buffer[0] = (byte)(buffer[0] - legacy.time_h);
+                                
+                                
+                                textBox10.Invoke(new Action(() => textBox10.Text = "" + (buffer[0])));
+                                textBox9.Invoke(new Action(() => textBox9.Text = "" + (buffer[1])));
+                                textBox8.Invoke(new Action(() => textBox8.Text = "" + (buffer[2])));
 
                                 temp[0] = buffer[9]; temp[1] = buffer[8];
                                 textBox1.Invoke(new Action(() => textBox1.Text = "" + (BitConverter.ToInt16(temp, 0) - legacy.n)));
                                 temp[0] = buffer[14]; temp[1] = buffer[13];
                                 textBox2.Invoke(new Action(() => textBox2.Text = "" + (buffer[12] - legacy.Km) + " " +
                                     (BitConverter.ToUInt16(temp, 0) - legacy.meter)));
-                                textBox14.Invoke(new Action(() => textBox1.Text = "" + buffer[15]));
+                                textBox14.Invoke(new Action(() => textBox14.Text = "" + buffer[15]));
                             }
                         }
                         timer.Restart();
@@ -364,6 +397,7 @@ namespace Coach_Display
             if (active_com.IsOpen)
                 active_com.Close();
             Thread.Sleep(50);
+            
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -413,6 +447,40 @@ namespace Coach_Display
                 cp.Style |= 0x04;
                 return cp;
             }
+        }
+    }
+
+    public class Time
+    {
+        public byte hours;
+        public byte minutes;
+        public byte seconds;
+        public Time(byte h, byte m, byte s)
+        {
+            hours = h; minutes = m; seconds = s;
+        }
+        public void difference(byte h, byte m, byte s)
+        {
+            if (h >= hours)
+                hours = (byte)(h - hours);
+            if (m >= minutes)
+                minutes = (byte)(m - minutes);
+            else
+            {
+                hours -= 1;
+                minutes = (byte)(60 + (m - minutes));
+            }
+            if (s >= seconds)
+                seconds = (byte)(s - seconds);
+            else
+            {
+                minutes -= 1;
+                seconds = (byte)(60 + (s - seconds));
+            }
+            // 1 2 30
+            // 2 1 10
+            // 0 58 40
+
         }
     }
 }
